@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from config import UPLOAD_DIRECTORY
-from services.tdim import TDModelService
+from services.tdim_service import TDModelService
 import os
 
 tdim_router = APIRouter(prefix='/api/tdim')
@@ -23,4 +23,5 @@ async def load_model(file: UploadFile):
 
 @tdim_router.get('/')
 async def get_models_list():
-    file_names = os.listdir(UPLOAD_DIRECTORY)
+    files_info = await TDModelService().get_file_info()
+    return files_info
