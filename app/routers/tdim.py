@@ -1,24 +1,36 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse
 import os
 from services.tdim_service import TDModelService
+from models.tdimod import TDIModel
 from config import UPLOAD_DIRECTORY
+from typing import Annotated
 
 tdim_router = APIRouter(prefix='/api/tdim')
 
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
 @tdim_router.post('/')
-async def upload_model(file: UploadFile):
+async def upload_model(td_model: Annotated[TDIModel, Depends()]):
+    # split info and file
+    tdiminfo = {
+        "filename": td_model.filename,
+        "desc": td_model.desc,
+        "raw_filename": td_model.td_file.filename
+    }
+
     file_msg, ok = await TDModelService().upload_file(
-        file=file.file,
-        filename=file.filename
+        file=td_model.td_file.file,
+        data=tdiminfo, 
     )
+
     if not ok:
         raise HTTPException(
             status_code=400,
             detail=file_msg)
-    return file_msg
+    
+    return tdiminfo
+
 
 @tdim_router.get('/')
 async def get_models_list():
