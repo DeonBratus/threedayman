@@ -15,14 +15,14 @@ class TDModelService:
         return {"file size": filename}, ok
     
 
-    async def get_file_info(self):
+    async def get_files_data(self):
         file_names = os.listdir(UPLOAD_DIRECTORY)
         files = dict()
         for i in range(len(file_names)):
             size = os.path.getsize(f"{UPLOAD_DIRECTORY}/{file_names[i]}")//1024
             index_format = file_names[i].index('.')
             files[i] = {
-                "filename": file_names[i][:index_format], 
+                "filename": file_names[i], 
                 "size": size, 
                 "format": f"{file_names[i][index_format+1:]}"
             }

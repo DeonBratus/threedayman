@@ -1,9 +1,15 @@
 import os
+import asyncio
 from app.config import UPLOAD_DIRECTORY
-file_name = "Group 419.png"
-file_names = os.listdir(UPLOAD_DIRECTORY)
-files = dict()
-for f in file_names:
-    files[f] = os.path.getsize(f"{UPLOAD_DIRECTORY}/{f}")
+from app.services.tdim_service import TDModelService
 
-print(files)
+async def test():
+    ffiles = await TDModelService().get_files_data()
+    for f in ffiles.values():  # Исправлено: перебор значений из словаря
+        print(f)
+    return ffiles  # Возвращает словарь файлов
+
+# Запуск асинхронной функции
+if __name__ == "__main__":
+    files = asyncio.run(test())  # Используем asyncio.run()
+    print(files)  # Печатаем результат
