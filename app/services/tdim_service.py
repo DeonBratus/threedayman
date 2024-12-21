@@ -2,11 +2,12 @@ import os
 from typing import BinaryIO
 from config import UPLOAD_DIRECTORY
 
-
+#Services of td-project
+#This service for only manage 3D
 class TDModelService:
     async def upload_file(self, file: BinaryIO, filename: str) -> dict | bool:
         file_path = os.path.join(UPLOAD_DIRECTORY, filename)
-        msg, ok = await self.full_check_file(filename=filename)
+        msg, ok = await self.__full_check_file(filename=filename)
         if not ok:
             return msg, ok
         with open(file_path, "wb") as f:
@@ -28,7 +29,7 @@ class TDModelService:
         return files
 
 
-    async def full_check_file(self, filename) ->  dict | bool :
+    async def __full_check_file(self, filename) ->  dict | bool :
         errs, execute_code = [], True
         if filename in os.listdir(UPLOAD_DIRECTORY):
             errs.append({"existing error": "file is exist"})
