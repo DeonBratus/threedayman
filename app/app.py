@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter
 from fastapi.staticfiles import StaticFiles
 import uvicorn
-from routers.tdim import tdim_router
+from routers.tdim_router import tdim_router
 
 main_router = APIRouter()
 main_router.include_router(tdim_router)

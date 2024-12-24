@@ -1,10 +1,10 @@
 import os
 import asyncio
 from app.config import UPLOAD_DIRECTORY
-from app.services.tdim_service import TDModelService
+from app.services.tdim_service import TdimService
 
 async def test():
-    ffiles = await TDModelService().get_files_data()
+    ffiles = await TdimService().get_all_datafiles()
     for f in ffiles.values():  # Исправлено: перебор значений из словаря
         print(f)
     return ffiles  # Возвращает словарь файлов
