@@ -1,5 +1,6 @@
 import os
 from typing import BinaryIO
+from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
 from config import UPLOAD_DIRECTORY
@@ -50,3 +51,8 @@ class TdimService:
             execute_code = False
         return errs, execute_code
     
+    async def get_model_viewer(self, model_id, db: AsyncSession):
+        async with db as session:
+            tdim_dals = TdimDals(session)
+            res = await tdim_dals.get_data_for_viewer(model_id=model_id)
+            return res

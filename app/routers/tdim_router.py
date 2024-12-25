@@ -1,3 +1,4 @@
+from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 import os
@@ -29,7 +30,7 @@ async def upload_model(
     file_msg, ok = await TdimService().upload_file(
         file=td_model.td_file.file,
         data=tdiminfo, 
-        db = db
+        db=db
     )
 
     await GalleryService().upload_preview_picture(
@@ -54,10 +55,19 @@ async def get_picture_for_gallery(db: AsyncSession = Depends(get_db)):
     paths = [f"/uploaded_files/{r['picture_path'].replace('uploaded_files/', '')}" for r in result]
     return paths
 
-@tdim_router.get("/{filename}")
-async def get_model():
-    return FileResponse(path="uploaded_files/detal/BOLT.stl", media_type="application/vnd.ms-pki.stl")
+@tdim_router.get("/model_viewer")
+async def get_model(model_id, db: AsyncSession = Depends(get_db)):
+    model_data = await TdimService().get_model_viewer(model_id=model_id, db=db)
+    model_data[0].filepath
+    return FileResponse(path=f"{model_data[0].filepath}", media_type="application/vnd.ms-pki.stl")
 
-@tdim_router.get("/{model_id}/info")
-async def get_info_model():
-    ...
+@tdim_router.get("/model_viewer/info")
+async def get_info_model(model_id, db: AsyncSession = Depends(get_db)):
+    model_data = await TdimService().get_model_viewer(model_id=model_id, db=db)
+    return {"Filename": model_data[0].filename,
+            "Size": model_data[0].file_size,
+            "Format": "STL", 
+            "Description": model_data[0].description,
+            "Uploaded_date": model_data[0].date_upload,
+            #"Filepath": model_data[0].filepath
+                }

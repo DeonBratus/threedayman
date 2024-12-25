@@ -5,57 +5,145 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gallery</title>
   <style>
+    /* Общий стиль страницы */
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f9;
+      background-color: #121212; /* Темный фон */
+      color: #e0e0e0; /* Светлый текст */
+      position: relative;
+      line-height: 1.6;
+      overflow-x: hidden;
     }
+
     h1 {
       text-align: center;
-      margin-top: 20px;
-      color: #333;
+      margin-top: 40px;
+      color: #f1f1f1; /* Светлый текст для заголовка */
+      font-size: 2.8rem;
+      text-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); /* Тень для заголовка */
     }
+
+    /* Стили для галереи */
     .gallery {
       display: flex;
       flex-wrap: wrap;
       gap: 20px;
       justify-content: center;
-      padding: 20px;
+      padding: 40px;
+      margin-top: 20px;
     }
+
+    /* Стили для каждой карточки */
     .gallery-item {
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
+      background-color: #1e1e1e; /* Темный фон карточки */
+      padding: 20px;
+      border-radius: 15px;
+      transition: transform 0.3s, box-shadow 0.3s ease-in-out;
+      width: 250px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Более глубокая тень */
+      cursor: pointer;
     }
-    .gallery img {
-      width: 200px;
-      height: 150px;
+
+    .gallery-item:hover {
+      transform: translateY(-5px) rotate(-1deg); /* Легкое поднятие и поворот карточки */
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7); /* Увеличенная тень */
+    }
+
+    /* Стили для изображений */
+    .gallery-item img {
+      width: 100%;
+      height: 200px;
       object-fit: cover;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      transition: transform 0.2s, box-shadow 0.2s;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      transition: transform 0.3s, box-shadow 0.3s ease-in-out;
+      border: 2px solid #f1f1f1; /* Обводка вокруг изображения */
     }
-    .gallery img:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+
+    .gallery-item img:hover {
+      transform: scale(1.1); /* Увеличение изображения */
+      box-shadow: 0 10px 20px rgba(255, 255, 255, 0.3); /* Светлая тень */
     }
+
+    /* Стили для текста внутри карточек */
     .gallery-item h3 {
-      margin: 10px 0 5px;
-      font-size: 16px;
-      color: #555;
+      margin: 10px 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #e0e0e0; /* Светлый текст для названия */
     }
+
     .gallery-item p {
-      margin: 0;
-      font-size: 14px;
-      color: #777;
+      font-size: 0.95rem;
+      color: #b0b0b0; /* Светло-серый текст для описания */
+    }
+
+    /* Стили для кнопки загрузки */
+    .upload-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(45deg, #ff6b6b, #f06595); /* Градиент кнопки */
+      color: white;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    .upload-btn:hover {
+      background: linear-gradient(45deg, #d6336c, #c2255c); /* Более темный градиент при наведении */
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Анимированные звезды на фоне */
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 2px, transparent 2px) 0 0 / 4px 4px, 
+                  radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px) 0 0 / 100px 100px;
+    }
+
+    /* Мобильная адаптивность */
+    @media (max-width: 768px) {
+      .gallery {
+        padding: 20px;
+      }
+
+      .gallery-item {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .upload-btn {
+        font-size: 0.9rem;
+        padding: 10px 15px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Image Gallery</h1>
+  <!-- Анимированные звезды на фоне -->
+  <div class="stars"></div>
+
+  <!-- Кнопка для перехода на страницу загрузки -->
+  <button class="upload-btn" onclick="window.location.href='/static/upload.html'">Upload Model</button>
+
+  <h1>3D Model Gallery</h1>
   <div class="gallery" id="gallery"></div>
 
   <script>
@@ -82,6 +170,11 @@
 
           const date = document.createElement('p');
           date.textContent = `Uploaded: ${new Date(file.date_upload).toLocaleDateString()}`;
+
+          // Добавление события клика для перехода на страницу просмотра модели
+          item.onclick = () => {
+            window.location.href = `/static/model-viewer.html?model_id=${file.file_id}`;
+          };
 
           item.appendChild(img);
           item.appendChild(title);

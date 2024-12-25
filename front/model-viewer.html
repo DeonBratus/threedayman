@@ -5,192 +5,223 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Model Viewer</title>
     <style>
+        /* Общий стиль страницы */
         body {
             margin: 0;
-            display: flex;
-            height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212; /* Темный фон страницы */
-            color: #e0e0e0; /* Светлый текст */
-        }
-
-        /* Контейнер для просмотра модели */
-        #viewer {
-            width: 500px;
-            height: 500px;
-            background-color: #1c1c1c; /* Темный фон для модели */
-            position: relative;
-            margin: 30px;
-            margin-top: 100px;
-            box-sizing: border-box;
-            aspect-ratio: 1;
-            border-radius: 8px;
-        }
-
-        /* Контейнер для информации о модели */
-        #info {
-            flex: 1;
-            background-color: #1e1e1e; /* Темный фон */
+            background-color: #121212;
+            color: #e0e0e0;
+            line-height: 1.8;
+            overflow-x: hidden;
             padding: 20px;
-            overflow-y: auto;
+        }
+
+        h1 {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 3rem;
+            color: #f1f1f1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 40px;
+            background-color: #1e1e1e;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+        }
+
+        .viewer-block {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        #viewer-container {
+            flex: 1;
+            max-width: 400px; /* Ограничение ширины */
+            height: 400px; /* Устанавливаем соотношение 1:1 */
+            background-color: #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+        }
+
+        #viewer {
+            width: 100%;
+            height: 100%;
+        }
+
+        .parameters {
+            flex: 1;
             display: flex;
             flex-direction: column;
+            justify-content: flex-start;
+            gap: 20px;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .info-row {
+            display: flex;
             justify-content: space-between;
-            border-left: 2px solid #333; /* Тонкая линия разделяющая блоки */
-            border-radius: 8px;
+            padding: 10px 0;
+            color: #b0b0b0;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #333;
         }
 
-        /* Кнопка возврата */
+        .description {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            color: #d0d0d0;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
         .back-button {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: #007BFF;
+            display: inline-block;
+            background: linear-gradient(45deg, #4caf50, #81c784);
             color: white;
-            padding: 10px 20px;
+            padding: 15px 30px;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
         }
 
         .back-button:hover {
-            background-color: #0056b3;
+            background: linear-gradient(45deg, #388e3c, #66bb6a);
+            transform: translateY(-2px) scale(1.05);
         }
 
-        h1, h2 {
-            font-size: 22px;
-            margin-bottom: 15px;
-            color: #ffffff;
-        }
-
-        p {
-            font-size: 16px;
-            margin: 8px 0;
-            color: #d3d3d3;
-        }
-
-        .file-item {
-            margin-bottom: 15px;
-            padding: 10px;
-            border: 1px solid #444;
-            border-radius: 5px;
-            background-color: #2a2a2a;
-            color: #e0e0e0;
-        }
-
-        /* Описание внизу */
-        #description {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #bbb;
-            background-color: #2a2a2a;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #444;
-        }
-
-        /* Настройки кнопок в информации */
-        .back-button {
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 600;
-            background-color: #007bff;
+        .home-button {
+            display: inline-block;
+            background: #2196f3;
             color: white;
-            cursor: pointer;
+            padding: 15px 30px;
             border: none;
-            transition: background-color 0.3s ease;
-        }
-        .back-button:hover {
-            background-color: #0056b3;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            margin-right: 10px;
         }
 
+        .home-button:hover {
+            background: #1976d2;
+            transform: translateY(-2px) scale(1.05);
+        }
     </style>
 </head>
 <body>
-    <div id="viewer"></div>
-    <div id="info">
-        <button class="back-button" onclick="window.history.back()">Back to Gallery</button>
+    <!-- Основной контейнер -->
+    <div class="container">
+        <!-- Кнопки навигации -->
         <div>
-            <h1>Model Information</h1>
-            <div id="file-info"></div>
+            <a href="/static/gallery.html" class="home-button">Home</a>
         </div>
-        <div id="description">
-            <h2>Description</h2>
-            <p>This is a placeholder description for the 3D model. You can add a detailed description of the model here.</p>
+
+        <!-- Название модели -->
+        <h1 id="model-title">3D Model Viewer</h1>
+
+        <!-- Блок просмотра модели и параметров -->
+        <div class="viewer-block">
+            <!-- Модель -->
+            <div id="viewer-container">
+                <div id="viewer"></div>
+            </div>
+
+            <!-- Параметры -->
+            <div class="parameters">
+                <div class="info-row">
+                    <span>Uploaded Date:</span>
+                    <span id="upload-date">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span>Type:</span>
+                    <span id="file-type">N/A</span>
+                </div>
+                <div class="info-row">
+                    <span>Size:</span>
+                    <span id="file-size">N/A</span>
+                </div>
+            </div>
         </div>
+
+        <!-- Блок описания -->
+        <div class="description" id="model-description">Description not available.</div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/STLLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
     <script>
+        const modelId = new URLSearchParams(window.location.search).get('model_id');
+        if (!modelId) {
+            alert('Model ID is missing in the URL!');
+            throw new Error('Model ID is missing in the URL');
+        }
+
         const viewer = document.getElementById('viewer');
-        const info = document.getElementById('file-info');
+        const modelTitle = document.getElementById('model-title');
+        const uploadDate = document.getElementById('upload-date');
+        const fileType = document.getElementById('file-type');
+        const fileSize = document.getElementById('file-size');
+        const modelDescription = document.getElementById('model-description');
 
-        // Инициализация сцены
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x1c1c1c); // Темный фон сцены
+        scene.background = new THREE.Color(0x2a2a2a);
 
-        const camera = new THREE.PerspectiveCamera(75, viewer.offsetWidth / viewer.offsetHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+        camera.position.set(0, 50, 100);
+
         const renderer = new THREE.WebGLRenderer();
         renderer.setSize(viewer.offsetWidth, viewer.offsetHeight);
         viewer.appendChild(renderer.domElement);
 
-        // Освещение
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+        const gridHelper = new THREE.GridHelper(200, 50, 0x555555, 0x333333);
+        scene.add(gridHelper);
+
+        const loader = new THREE.STLLoader();
+        loader.load(`/api/tdim/model_viewer?model_id=${modelId}`, (geometry) => {
+            const material = new THREE.MeshLambertMaterial({ color: 0x2255aa });
+            const mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+
+            geometry.computeBoundingBox();
+            const centerX = (geometry.boundingBox.max.x + geometry.boundingBox.min.x) / 2;
+            const centerY = (geometry.boundingBox.max.y + geometry.boundingBox.min.y) / 2;
+            const centerZ = (geometry.boundingBox.max.z + geometry.boundingBox.min.z) / 2;
+
+            mesh.position.set(-centerX, -centerY, -centerZ);
+
+            controls.update();
+        });
+
         const light = new THREE.DirectionalLight(0xffffff, 1);
         light.position.set(1, 1, 1).normalize();
         scene.add(light);
 
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        const ambientLight = new THREE.AmbientLight(0x404040);
         scene.add(ambientLight);
-
-        // Сетка
-        const gridHelper = new THREE.GridHelper(50, 5, 0x9999ff, 0x444444); // Меняем цвет сетки
-        gridHelper.position.y = -10;
-        scene.add(gridHelper);
-
-        // Контролы
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.rotateSpeed = 0.5;
-
-        // Загрузка модели
-        const loader = new THREE.STLLoader();
-        const modelUrl = new URLSearchParams(window.location.search).get("model");
-
-        if (modelUrl) {
-            loader.load(`/api/tdim/${modelUrl}`, function (geometry) {
-                const material = new THREE.MeshLambertMaterial({ color: 0x3030FF });
-                const mesh = new THREE.Mesh(geometry, material);
-                scene.add(mesh);
-
-                // Центрирование модели
-                mesh.geometry.computeBoundingBox();
-                const bbox = mesh.geometry.boundingBox;
-                const centerX = (bbox.max.x + bbox.min.x) / 2;
-                const centerY = (bbox.max.y + bbox.min.y) / 2;
-                const centerZ = (bbox.max.z + bbox.min.z) / 2;
-
-                mesh.position.set(-centerX, -centerY, -centerZ);
-
-                // Камера
-                const modelHeight = bbox.max.y - bbox.min.y;
-                const aspectRatio = viewer.offsetWidth / viewer.offsetHeight;
-                const fieldOfView = 45;
-                camera.position.set(0, 0, modelHeight * 1.5); 
-                camera.aspect = aspectRatio;
-                camera.fov = fieldOfView;
-                camera.updateProjectionMatrix();
-                controls.target.set(0, 0, 0);
-                controls.update();
-
-                // Загружаем информацию о файле после загрузки модели
-                fetchFileInfo(modelUrl);
-            });
-        }
 
         function animate() {
             requestAnimationFrame(animate);
@@ -199,34 +230,23 @@
         }
         animate();
 
-        window.addEventListener("resize", () => {
-            camera.aspect = viewer.offsetWidth / viewer.offsetHeight;
-            camera.updateProjectionMatrix();
+        window.addEventListener('resize', () => {
             renderer.setSize(viewer.offsetWidth, viewer.offsetHeight);
         });
 
-        // Получение информации о файле
-        async function fetchFileInfo(modelUrl) {
-            try {
-                const response = await fetch(`/api/tdim/info/${modelUrl}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch file info');
-                }
-                const fileInfo = await response.json();
-
-                // Очистим предыдущую информацию и добавим новую
-                info.innerHTML = `
-                    <button class="back-button" onclick="window.history.back()">Back to Gallery</button>
-                    <h1>Model Information</h1>
-                    <p><strong>Filename:</strong> ${fileInfo.filename}</p>
-                    <p><strong>Size:</strong> ${fileInfo.size} KB</p>
-                    <p><strong>Format:</strong> ${fileInfo.format}</p>
-                `;
-            } catch (error) {
-                console.error('Error fetching file info:', error);
-                info.innerHTML = '<p>Error fetching file info.</p>';
-            }
-        }
+        fetch(`/api/tdim/model_viewer/info?model_id=${modelId}`)
+            .then(response => response.json())
+            .then(data => {
+                modelTitle.textContent = data.Filename || '3D Model Viewer';
+                uploadDate.textContent = `Uploaded Date: ${data.Uploaded_date || 'N/A'}`;
+                fileType.textContent = `Type: ${data.Format || 'N/A'}`;
+                fileSize.textContent = `Size: ${data.Size || 'N/A'} KB`;
+                modelDescription.textContent = data.Description || 'Description not available.';
+            })
+            .catch(error => {
+                console.error('Error fetching model info:', error);
+                modelDescription.textContent = 'Failed to load model information.';
+            });
     </script>
 </body>
 </html>

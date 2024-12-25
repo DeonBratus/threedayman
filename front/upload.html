@@ -1,98 +1,193 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Upload Model</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f9f9f9;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    input, textarea, button {
-      padding: 10px;
-      font-size: 16px;
-    }
-    button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    a {
-      display: block;
-      margin-top: 20px;
-      text-align: center;
-      color: #007bff;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Загрузка модели</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f7f7f7;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        #message {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .preview {
+            display: block;
+            margin-top: 10px;
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+
+        #remove-preview {
+            cursor: pointer;
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Upload New Model</h1>
-    <form id="uploadForm">
-      <input type="text" id="filename" name="filename" placeholder="Model Name" required>
-      <textarea id="desc" name="desc" placeholder="Description" rows="3" required></textarea>
-      <input type="file" id="td_file" name="td_file" required>
-      <input type="file" id="preview_picture" name="preview_picture" required>
-      <button type="submit">Upload Model</button>
-    </form>
-    <a href="gallery.html">Go to Gallery</a>
-  </div>
+    <div class="container">
+        <h1>Загрузите модель</h1>
+        <form id="upload-form" enctype="multipart/form-data">
+            <!-- Превью изображения -->
+            <div id="preview-container" style="text-align: center;">
+                <img id="preview-img" class="preview" style="display:none;" alt="Предпросмотр изображения" />
+                <br>
+                <input type="file" id="prewiev-picture" name="prewiev-picture" required><br><br>
+                <span id="remove-preview" onclick="removePreview()">Удалить превью</span>
+            </div>
 
-  <script>
-    const API_BASE = '/api/tdim';
+            <!-- Название модели -->
+            <label for="filename">Имя модели:</label>
+            <input type="text" id="filename" name="filename" required><br><br>
 
-    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+            <!-- Файл модели -->
+            <label for="td-file">Файл модели:</label>
+            <input type="file" id="td-file" name="td-file" required><br><br>
 
-      const formData = new FormData();
-      formData.append('filename', document.getElementById('filename').value);
-      formData.append('desc', document.getElementById('desc').value);
-      formData.append('td_file', document.getElementById('td_file').files[0]);
-      formData.append('prewiev_picture', document.getElementById('preview_picture').files[0]);
+            <!-- Описание -->
+            <label for="desc">Описание:</label>
+            <textarea id="desc" name="desc" required></textarea><br><br>
 
-      try {
-        const response = await fetch(API_BASE, {
-          method: 'POST',
-          body: formData,
+            <!-- Кнопка отправки формы -->
+            <button type="submit">Загрузить</button>
+        </form>
+
+        <div id="message"></div>
+    </div>
+
+    <script>
+        // Функция для отображения превью изображения
+        document.getElementById("prewiev-picture").addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            const previewImg = document.getElementById("preview-img");
+            const removePreview = document.getElementById("remove-preview");
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewImg.style.display = 'block';  // Показываем изображение
+                    removePreview.style.display = 'inline';  // Показываем кнопку удаления
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                previewImg.style.display = 'none';  // Скрываем изображение, если файл не выбран
+                removePreview.style.display = 'none';  // Скрываем кнопку удаления
+            }
         });
 
-        if (response.ok) {
-          alert('Model uploaded successfully!');
-          document.getElementById('uploadForm').reset();
-        } else {
-          const error = await response.json();
-          alert(`Error: ${error.detail}`);
+        // Функция для удаления превью
+        function removePreview() {
+            const previewImg = document.getElementById("preview-img");
+            const removePreview = document.getElementById("remove-preview");
+            const previewInput = document.getElementById("prewiev-picture");
+
+            previewImg.style.display = 'none';  // Скрываем изображение
+            removePreview.style.display = 'none';  // Скрываем кнопку удаления
+
+            // Очищаем выбранный файл
+            previewInput.value = '';
         }
-      } catch (err) {
-        console.error('Upload failed:', err);
-        alert('Failed to upload the model. Please try again.');
-      }
-    });
-  </script>
+
+        document.getElementById("upload-form").addEventListener("submit", async function(event) {
+            event.preventDefault();  // Отменяем стандартное поведение формы
+
+            // Получаем значения полей формы
+            const filename = document.getElementById("filename").value;
+            const desc = document.getElementById("desc").value;
+            const tdFile = document.getElementById("td-file").files[0];
+            const previewPicture = document.getElementById("prewiev-picture").files[0];
+
+            // Создаём объект FormData для остальных данных (не для filename)
+            const formData = new FormData();
+            formData.append("desc", desc);
+            formData.append("td_file", tdFile);
+            formData.append("prewiev_picture", previewPicture);
+
+            // Формируем URL с query-параметром filename
+            const url = `/api/tdim/?filename=${encodeURIComponent(filename)}`;
+
+            // Отправляем POST запрос на сервер с query-параметром и FormData в теле запроса
+            const response = await fetch(url, {
+                method: "POST",
+                body: formData
+            });
+
+            const messageDiv = document.getElementById("message");
+
+            if (response.ok) {
+                const data = await response.json();
+                messageDiv.innerHTML = `
+                    <p>Модель успешно загружена!</p>
+                    <p>Имя модели: ${data.filename}</p>
+                    <p>Описание: ${data.desc}</p>
+                    <p>Файл: ${data.raw_filename}</p>
+                    <p>Предпросмотр: ${data.picture_path}</p>
+                `;
+            } else {
+                // Преобразуем объект ошибки в строку
+                const errorData = await response.json();
+                messageDiv.innerHTML = `<p style="color: red;">Ошибка: ${JSON.stringify(errorData)}</p>`;
+            }
+        });
+    </script>
 </body>
 </html>
