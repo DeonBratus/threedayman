@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Model</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    input, textarea, button {
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    a {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: #007bff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Upload New Model</h1>
+    <form id="uploadForm">
+      <input type="text" id="filename" name="filename" placeholder="Model Name" required>
+      <textarea id="desc" name="desc" placeholder="Description" rows="3" required></textarea>
+      <input type="file" id="td_file" name="td_file" required>
+      <input type="file" id="preview_picture" name="preview_picture" required>
+      <button type="submit">Upload Model</button>
+    </form>
+    <a href="gallery.html">Go to Gallery</a>
+  </div>
+
+  <script>
+    const API_BASE = '/api/tdim';
+
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('filename', document.getElementById('filename').value);
+      formData.append('desc', document.getElementById('desc').value);
+      formData.append('td_file', document.getElementById('td_file').files[0]);
+      formData.append('prewiev_picture', document.getElementById('preview_picture').files[0]);
+
+      try {
+        const response = await fetch(API_BASE, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          alert('Model uploaded successfully!');
+          document.getElementById('uploadForm').reset();
+        } else {
+          const error = await response.json();
+          alert(`Error: ${error.detail}`);
+        }
+      } catch (err) {
+        console.error('Upload failed:', err);
+        alert('Failed to upload the model. Please try again.');
+      }
+    });
+  </script>
+</body>
+</html>

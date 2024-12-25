@@ -1,19 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 import os
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Annotated, List
 from db.database import get_db
 from services.tdim_service import TdimService
+from services.gallery_service import GalleryService
 from schemes.tdim_scheme import TdimSchemeUpld
 from config import UPLOAD_DIRECTORY
-from typing import Annotated
 
 tdim_router = APIRouter(prefix='/api/tdim')
 
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
 @tdim_router.post('/')
-async def upload_model(td_model: Annotated[TdimSchemeUpld, Depends()],  db: AsyncSession = Depends(get_db)):
+async def upload_model(
+    td_model: Annotated[TdimSchemeUpld, Depends()],
+    db: AsyncSession = Depends(get_db),
+    ):
     # split info and file
     tdiminfo = {
         "filename": td_model.filename,
@@ -27,7 +31,8 @@ async def upload_model(td_model: Annotated[TdimSchemeUpld, Depends()],  db: Asyn
         data=tdiminfo, 
         db = db
     )
-    await TdimService().upload_preview_picture(
+
+    await GalleryService().upload_preview_picture(
         td_model.prewiev_picture.file,
         td_model.filename,
         td_model.prewiev_picture.filename)
@@ -39,36 +44,20 @@ async def upload_model(td_model: Annotated[TdimSchemeUpld, Depends()],  db: Asyn
     
     return tdiminfo
 
+@tdim_router.get("/gallery")
+async def get_info_for_gallery(db: AsyncSession = Depends(get_db)):
+    return await GalleryService().get_all_info_gal(db)
 
-@tdim_router.get('/')
-async def get_models_list():
-    files_info = await TdimService().get_all_datafiles()
-    if not files_info:
-        raise HTTPException(status_code=404, detail="No models found")
-    
-    # Если `files_info` это словарь, мы должны преобразовать его в список
-    models = [file_info for file_info in files_info.values()]
-    return models
+@tdim_router.get("/gallery_pictures")
+async def get_picture_for_gallery(db: AsyncSession = Depends(get_db)):
+    result = await GalleryService().get_all_info_gal(db)
+    paths = [f"/uploaded_files/{r['picture_path'].replace('uploaded_files/', '')}" for r in result]
+    return paths
 
+@tdim_router.get("/{filename}")
+async def get_model():
+    return FileResponse(path="uploaded_files/detal/BOLT.stl", media_type="application/vnd.ms-pki.stl")
 
-@tdim_router.get('/{filename}')
-async def get_model(filename: str):
-    file_path = os.path.join(UPLOAD_DIRECTORY, filename)
-    if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="File not found")
-    return FileResponse(file_path, media_type="application/vnd.ms-pki.stl")
-
-
-@tdim_router.get('/info/{filename}')
-async def get_model_info(filename: str):
-    info_file = None
-    files = await TdimService().get_all_datafiles()
-    for f in files.values():
-        if f["filename"] == filename:
-            info_file = f
-            break
-
-    if not info_file:
-        raise HTTPException(status_code=404, detail="Model info not found")
-    
-    return info_file
+@tdim_router.get("/{model_id}/info")
+async def get_info_model():
+    ...

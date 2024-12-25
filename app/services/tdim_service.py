@@ -1,9 +1,8 @@
 import os
 from typing import BinaryIO
-from config import UPLOAD_DIRECTORY
-from datetime import datetime
-from dals.tdim_dals import TdimDals
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import datetime
+from config import UPLOAD_DIRECTORY
 from dals.tdim_dals import TdimDals
 '''
 Services of 3d-project. This service for only manage files
@@ -24,13 +23,14 @@ class TdimService:
             # Save file to folder
             with open(file_path, "wb") as f:
                 f.write(file.read())
-            upf = await self.__upload_file_info(data, file_path, complex_path, db)
+            # Send data to db
+            upf = await self.__send_data_to_db(data, file_path, complex_path, db)
         except ConnectionError as e:
             raise e
         return upf, ok
     
 
-    async def __upload_file_info(self, data, file_path, complex_path, db: AsyncSession):
+    async def __send_data_to_db(self, data, file_path, complex_path, db: AsyncSession):
         async with db as session:
             async with session.begin():
                 data_to_db = data # filename, desc
@@ -43,31 +43,10 @@ class TdimService:
                 return up_file
 
 
-    async def upload_preview_picture(self, picture: BinaryIO, folder_name: str, picname: str):
-        complex_path = f"{UPLOAD_DIRECTORY}/{folder_name}"
-        file_path = os.path.join(complex_path, f"{picname}")
-
-        with open(file_path, "wb") as pf:
-            pf.write(picture.read())
-
-
-    async def get_all_datafiles(self):
-        file_names = os.listdir(UPLOAD_DIRECTORY)
-        files = dict()
-        for i in range(len(file_names)):
-            size = os.path.getsize(f"{UPLOAD_DIRECTORY}/{file_names[i]}")//1024
-            index_format = file_names[i].index('.')
-            files[i] = {
-                "filename": file_names[i], 
-                "size": size, 
-                "format": f"{file_names[i][index_format+1:]}"
-            }
-        return files
-
-
     async def file_existing_check(self, filename: str, name: str) ->  dict | bool :
         errs, execute_code = [], True
         if filename in os.listdir(f"{UPLOAD_DIRECTORY}/{name}"):
             errs.append({"existing error": "file is exist"})
             execute_code = False
         return errs, execute_code
+    

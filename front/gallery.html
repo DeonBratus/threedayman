@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      color: #333;
+    }
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding: 20px;
+    }
+    .gallery-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .gallery img {
+      width: 200px;
+      height: 150px;
+      object-fit: cover;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .gallery img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+    .gallery-item h3 {
+      margin: 10px 0 5px;
+      font-size: 16px;
+      color: #555;
+    }
+    .gallery-item p {
+      margin: 0;
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <h1>Image Gallery</h1>
+  <div class="gallery" id="gallery"></div>
+
+  <script>
+    async function loadGallery() {
+      try {
+        const response = await fetch('/api/tdim/gallery');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch gallery info: ${response.statusText}`);
+        }
+
+        const galleryData = await response.json();
+        const gallery = document.getElementById('gallery');
+
+        galleryData.forEach(file => {
+          const item = document.createElement('div');
+          item.className = 'gallery-item';
+
+          const img = document.createElement('img');
+          img.src = `/uploaded_files/${file.picture_path.replace('uploaded_files/', '')}`;
+          img.alt = file.filename;
+
+          const title = document.createElement('h3');
+          title.textContent = file.filename;
+
+          const date = document.createElement('p');
+          date.textContent = `Uploaded: ${new Date(file.date_upload).toLocaleDateString()}`;
+
+          item.appendChild(img);
+          item.appendChild(title);
+          item.appendChild(date);
+
+          gallery.appendChild(item);
+        });
+      } catch (error) {
+        console.error('Error loading gallery:', error);
+        const gallery = document.getElementById('gallery');
+        gallery.innerHTML = '<p style="color: red;">Failed to load gallery.</p>';
+      }
+    }
+
+    loadGallery();
+  </script>
+</body>
+</html>
