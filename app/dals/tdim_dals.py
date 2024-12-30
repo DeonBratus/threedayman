@@ -25,7 +25,7 @@ class TdimDals:
         return up_file
     
     
-    async def get_all_files_gallery(self) -> List[dict]:
+    async def get_datapics_gallery(self) -> List[dict]:
         """Получение всех файлов из базы данных."""
         try:
             query = select(
@@ -48,6 +48,28 @@ class TdimDals:
         except NameError as e:
             raise e
         
+
+    async def get_datatdim_gallery(self) -> List[dict]:
+        query = select(
+            TdimModel.file_id,
+            TdimModel.filename,
+            TdimModel.filepath,
+            TdimModel.date_upload
+        )
+        res = await self.db_session.execute(query)
+        res_info = res.all()
+        return [
+            {
+            "file_id": info.file_id,
+            "filename": info.filename,
+            "filepath": info.filepath,
+            "date_upload": info.date_upload
+            }
+        for info in res_info
+        ]
+
+
+
     async def get_data_for_viewer(self, model_id):
         query = select(TdimModel).where(TdimModel.file_id == model_id)
         res = await self.db_session.execute(query)

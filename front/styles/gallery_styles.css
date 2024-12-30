@@ -1,0 +1,124 @@
+/* Общий стиль страницы */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #1c1c1c; /* Монотонный темный фон */
+  color: #e0e0e0; /* Светлый текст */
+  position: relative;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Заголовок */
+h1 {
+  text-align: center;
+  margin-top: 40px;
+  color: #f1f1f1; /* Светлый текст для заголовка */
+  font-size: 2.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.7); /* Тень для заголовка */
+}
+
+/* Стили для галереи */
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 40px;
+  margin-top: 20px;
+}
+
+/* Стили для каждой карточки */
+.gallery-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: #242424; /* Монотонный темный фон карточки */
+  padding: 20px;
+  border-radius: 10px;
+  transition: transform 0.3s, box-shadow 0.3s ease-in-out;
+  width: 250px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); /* Более глубокая тень */
+  cursor: pointer;
+  backdrop-filter: blur(10px); /* Эффект размытия фона карточки */
+}
+
+.gallery-item:hover {
+  transform: translateY(-5px) scale(1.05); /* Легкое поднятие и увеличение карточки */
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8); /* Увеличенная тень */
+}
+
+/* Стили для изображений */
+.gallery-item img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  transition: transform 0.3s, box-shadow 0.3s ease-in-out;
+  border: 2px solid #f1f1f1; /* Обводка вокруг изображения */
+}
+
+.gallery-item img:hover {
+  transform: scale(1.1); /* Увеличение изображения */
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3); /* Светлая тень */
+}
+
+/* Стили для текста внутри карточек */
+.gallery-item h3 {
+  margin: 10px 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #e0e0e0; /* Светлый текст для названия */
+  text-transform: capitalize;
+}
+
+.gallery-item p {
+  font-size: 0.95rem;
+  color: #b0b0b0; /* Светло-серый текст для описания */
+}
+
+/* Стили для кнопки загрузки */
+.upload-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #ff4b2b, #ff416c); /* Градиент кнопки */
+  color: white;
+  padding: 12px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+}
+
+.upload-btn:hover {
+  background: linear-gradient(135deg, #ff416c, #ff4b2b); /* Обратный градиент при наведении */
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+}
+
+/* Мобильная адаптивность */
+@media (max-width: 768px) {
+  .gallery {
+      padding: 20px;
+  }
+
+  .gallery-item {
+      width: 100%;
+      max-width: 300px;
+  }
+
+  .upload-btn {
+      font-size: 0.9rem;
+      padding: 10px 15px;
+  }
+}

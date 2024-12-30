@@ -20,5 +20,11 @@ class GalleryService:
     async def get_all_info_gal(self, db: AsyncSession):
         async with db as session:
             tdim_dals = TdimDals(session)
-            res = await tdim_dals.get_all_files_gallery()
+            res = await tdim_dals.get_datapics_gallery()
+            return res
+    
+    async def get_tdim_info_gal(self, db: AsyncSession):
+        async with db as session:
+            tdim_dals = TdimDals(session)
+            res = await tdim_dals.get_datatdim_gallery()
             return res
