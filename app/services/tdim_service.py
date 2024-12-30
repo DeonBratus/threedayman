@@ -37,6 +37,7 @@ class TdimService:
                 data_to_db = data # filename, desc
                 data_to_db["filepath"] = file_path
                 data_to_db["size"] = os.path.getsize(file_path)//1024
+                data_to_db["desc"] = data["desc"]
                 data_to_db["upload_date"] = datetime.now().date()
                 data_to_db["picture_path"] = f"{complex_path}/{data["picture_path"]}"
                 file_dal = TdimDals(session)

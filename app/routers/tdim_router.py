@@ -51,25 +51,17 @@ async def upload_model(
 async def get_info_for_gallery(db: AsyncSession = Depends(get_db)):
     return await GalleryService().get_all_info_gal(db)
 
-
-@tdim_router.get("/gallery3D")
-async def get_info_for_gallery(db: AsyncSession = Depends(get_db)):
-    return await GalleryService().get_tdim_info_gal(db)
-
-
 @tdim_router.get("/gallery_pictures")
 async def get_picture_for_gallery(db: AsyncSession = Depends(get_db)):
     result = await GalleryService().get_all_info_gal(db)
     paths = [f"/uploaded_files/{r['picture_path'].replace('uploaded_files/', '')}" for r in result]
     return paths
 
-
 @tdim_router.get("/model_viewer")
 async def get_model(model_id, db: AsyncSession = Depends(get_db)):
     model_data = await TdimService().get_model_viewer(model_id=model_id, db=db)
     model_data[0].filepath
     return FileResponse(path=f"{model_data[0].filepath}", media_type="application/vnd.ms-pki.stl")
-
 
 @tdim_router.get("/model_viewer/info")
 async def get_info_model(model_id, db: AsyncSession = Depends(get_db)):

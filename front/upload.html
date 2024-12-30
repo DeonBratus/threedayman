@@ -163,7 +163,7 @@
             formData.append("prewiev_picture", previewPicture);
 
             // Формируем URL с query-параметром filename
-            const url = `/api/tdim/?filename=${encodeURIComponent(filename)}`;
+            const url = `/api/tdim/?filename=${encodeURIComponent(filename)}&desc=${encodeURIComponent(desc)}`;
 
             // Отправляем POST запрос на сервер с query-параметром и FormData в теле запроса
             const response = await fetch(url, {

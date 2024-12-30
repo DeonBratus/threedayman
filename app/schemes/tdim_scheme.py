@@ -12,7 +12,7 @@ class TdimSchemeUpld(BaseModel):
     filename: Optional[str]
     prewiev_picture: Optional[UploadFile]
     td_file: UploadFile
-    desc: Optional[str] = None
+    desc: Optional[str]
 
 
 class TdimSchemeDB(BaseModel):
