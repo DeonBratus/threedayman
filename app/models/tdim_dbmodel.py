@@ -26,3 +26,18 @@ class TdimModel(Base):
             "file_size": self.file_size,
             "date_upload": self.date_upload.isoformat(),
         }
+    
+
+class ProjModel(Base):
+    __tablename__ = "projects"
+
+    proj_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    projname = Column(String, nullable=False, unique=True)
+    picture_path = Column(String, nullable=True, unique=True)
+
+    def to_dict(self):
+        return {
+            "proj_id": str(self.proj_id),
+            "projname": self.projname,
+            "picture_path": self.picture_path,
+        }
