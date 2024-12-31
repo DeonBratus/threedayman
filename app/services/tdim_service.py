@@ -40,6 +40,7 @@ class TdimService:
                 data_to_db["desc"] = data["desc"]
                 data_to_db["upload_date"] = datetime.now().date()
                 data_to_db["picture_path"] = f"{complex_path}/{data["picture_path"]}"
+                data_to_db["proj_name"] = data["proj_name"]
                 file_dal = TdimDals(session)
                 up_file = await file_dal.upload_file(data_to_db)
                 return up_file

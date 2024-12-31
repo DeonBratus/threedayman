@@ -6,13 +6,14 @@ from datetime import datetime, date
 from fastapi import UploadFile, File
 from typing import BinaryIO
 from typing import Optional
-
+import uuid
 
 class TdimSchemeUpld(BaseModel):
     filename: Optional[str]
     prewiev_picture: Optional[UploadFile]
     td_file: UploadFile
     desc: Optional[str]
+    proj_name: Optional[str]
 
 
 class TdimSchemeDB(BaseModel):

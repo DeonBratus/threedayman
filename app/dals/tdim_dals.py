@@ -11,13 +11,14 @@ class TdimDals:
     
     async def upload_file(self, tdim_info: dict) -> TdimModel:
         
-        up_file = TdimModel(
+        up_file = TdimModel (
             filename=tdim_info["filename"],
             filepath=tdim_info["filepath"],
             file_size=tdim_info["size"],
             description=tdim_info["desc"],
             date_upload=tdim_info["upload_date"],
-            picture_path=tdim_info["picture_path"]
+            picture_path=tdim_info["picture_path"],
+            proj_name=tdim_info["proj_name"]
         )
 
         self.db_session.add(up_file)

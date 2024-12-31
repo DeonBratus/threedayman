@@ -19,3 +19,15 @@ async def create_project(projname: str, pic: UploadFile, db: AsyncSession = Depe
         picname=pic.filename,
         db=db)
     return res
+
+@proj_api.get('/list')
+async def show_projects(db: AsyncSession = Depends(get_db)):
+    proj_service = ProjectService()
+    res = await proj_service.show_all_projs(db)
+    return res 
+
+@proj_api.get("/")
+async def get_tdims_of_proj(proj_name, db: AsyncSession = Depends(get_db)):
+    proj_service = ProjectService()
+    res = await proj_service.get_tdims_from_proj(proj_name=proj_name, db=db)
+    return res

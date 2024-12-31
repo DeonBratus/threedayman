@@ -25,7 +25,8 @@ async def upload_model(
         "filename": td_model.filename,
         "desc": td_model.desc,
         "raw_filename": td_model.td_file.filename,
-        "picture_path": td_model.prewiev_picture.filename
+        "picture_path": td_model.prewiev_picture.filename,
+        "proj_name": td_model.proj_name
     }
 
     file_msg, ok = await TdimService().upload_file(

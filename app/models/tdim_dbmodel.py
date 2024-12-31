@@ -15,6 +15,7 @@ class TdimModel(Base):
     picture_path = Column(String, nullable=True)
     file_size = Column(Integer, nullable=False)
     date_upload = Column(Date, nullable=False)
+    proj_name = Column(String, nullable=True, default="default_project")
 
     def to_dict(self):
         return {
@@ -25,6 +26,7 @@ class TdimModel(Base):
             "picture_path": self.picture_path,
             "file_size": self.file_size,
             "date_upload": self.date_upload.isoformat(),
+            "proj_name": str(self.proj_name),
         }
     
 

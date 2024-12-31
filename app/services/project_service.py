@@ -26,3 +26,18 @@ class ProjectService:
             pf.write(picture.read())
         
         return {"msg": "file has been uploaded", "path": file_path}
+
+
+    async def show_all_projs(self, db: AsyncSession):
+        async with db as session:
+            async with session.begin():
+                proj_dal = ProjDAL(session)
+                data = await proj_dal.get_all_projs()
+            return data
+    
+    async def get_tdims_from_proj(self, proj_name, db: AsyncSession):
+        async with db as session:
+            async with session.begin():
+                proj_dal = ProjDAL(session)
+                data = await proj_dal.get_tdims_from_proj(proj_name=proj_name)
+            return data
