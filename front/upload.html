@@ -33,7 +33,7 @@
             font-weight: bold;
         }
 
-        input, textarea, button {
+        input, textarea, button, select {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -50,6 +50,15 @@
 
         button:hover {
             background-color: #45a049;
+        }
+
+        .button-home {
+            background-color: #007bff;
+            margin-top: 10px;
+        }
+
+        .button-home:hover {
+            background-color: #0056b3;
         }
 
         textarea {
@@ -78,6 +87,18 @@
             margin-top: 5px;
             display: none;
         }
+
+        .project-option {
+            display: flex;
+            align-items: center;
+        }
+
+        .project-option img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -92,6 +113,12 @@
                 <span id="remove-preview" onclick="removePreview()">Удалить превью</span>
             </div>
 
+            <!-- Название проекта (выбор из списка) -->
+            <label for="proj_name">Название проекта:</label>
+            <select id="proj_name" name="proj_name" required>
+                <!-- Сюда будет добавляться список проектов -->
+            </select><br><br>
+
             <!-- Название модели -->
             <label for="filename">Имя модели:</label>
             <input type="text" id="filename" name="filename" required><br><br>
@@ -103,15 +130,64 @@
             <!-- Описание -->
             <label for="desc">Описание:</label>
             <textarea id="desc" name="desc" required></textarea><br><br>
-
+            
             <!-- Кнопка отправки формы -->
             <button type="submit">Загрузить</button>
         </form>
+
+        <!-- Кнопка Домой -->
+        <a href="/static/gallery.html" class="button-home" onclick="goHome()">Домой</a>
 
         <div id="message"></div>
     </div>
 
     <script>
+        // Функция для загрузки списка проектов
+        async function loadProjects() {
+            try {
+                const response = await fetch('/api/proj/list');
+                if (!response.ok) {
+                    throw new Error('Ошибка при загрузке проектов');
+                }
+
+                const projects = await response.json();
+                const projSelect = document.getElementById("proj_name");
+
+                // Заполнение выпадающего списка проектами
+                projects.forEach(project => {
+                    const option = document.createElement("option");
+                    option.value = project.projname;  // Используем имя проекта как значение
+
+                    // Создание элемента для отображения проекта с картинкой
+                    const optionContent = document.createElement('div');
+                    optionContent.classList.add('project-option');
+
+                    const projectImg = document.createElement('img');
+                    projectImg.src = project.picture_path;
+                    projectImg.alt = project.projname;
+                    optionContent.appendChild(projectImg);
+
+                    const projectName = document.createElement('span');
+                    projectName.textContent = project.projname;
+                    optionContent.appendChild(projectName);
+
+                    // Добавляем элементы в option
+                    const optionWrapper = document.createElement('option');
+                    optionWrapper.value = project.projname;  // Устанавливаем имя проекта в качестве значения
+                    optionWrapper.innerHTML = optionContent.innerHTML;  // Вставляем содержимое
+
+                    projSelect.appendChild(optionWrapper);
+                });
+            } catch (error) {
+                console.error('Ошибка при загрузке проектов:', error);
+                const messageDiv = document.getElementById("message");
+                messageDiv.innerHTML = `<p style="color: red;">Ошибка при загрузке списка проектов.</p>`;
+            }
+        }
+
+        // Загружаем проекты при загрузке страницы
+        window.onload = loadProjects;
+
         // Функция для отображения превью изображения
         document.getElementById("prewiev-picture").addEventListener("change", function(event) {
             const file = event.target.files[0];
@@ -151,6 +227,7 @@
             event.preventDefault();  // Отменяем стандартное поведение формы
 
             // Получаем значения полей формы
+            const projName = document.getElementById("proj_name").value;  // Теперь передаем имя проекта
             const filename = document.getElementById("filename").value;
             const desc = document.getElementById("desc").value;
             const tdFile = document.getElementById("td-file").files[0];
@@ -158,13 +235,13 @@
 
             // Создаём объект FormData для остальных данных (не для filename)
             const formData = new FormData();
+            formData.append("proj_name", projName);  // Добавляем имя проекта
             formData.append("desc", desc);
             formData.append("td_file", tdFile);
             formData.append("prewiev_picture", previewPicture);
 
             // Формируем URL с query-параметром filename
-            const url = `/api/tdim/?filename=${encodeURIComponent(filename)}&desc=${encodeURIComponent(desc)}`;
-
+            const url = `/api/tdim/?filename=${encodeURIComponent(filename)}&desc=${encodeURIComponent(desc)}&proj_name=${encodeURIComponent(projName)}`;
             // Отправляем POST запрос на сервер с query-параметром и FormData в теле запроса
             const response = await fetch(url, {
                 method: "POST",
@@ -188,6 +265,11 @@
                 messageDiv.innerHTML = `<p style="color: red;">Ошибка: ${JSON.stringify(errorData)}</p>`;
             }
         });
+
+        // Функция для перехода на главную страницу
+        function goHome() {
+            window.location.href = '/';  // Переход на домашнюю страницу
+        }
     </script>
 </body>
 </html>

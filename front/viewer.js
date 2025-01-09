@@ -13,7 +13,7 @@ const modelDescription = document.getElementById('model-description');
 const downloadButton = document.getElementById('download-button');
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x2a2a2a);
+scene.background = new THREE.Color(0xeeeeee);
 
 const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
 camera.position.set(0, 50, 100);
@@ -24,7 +24,7 @@ viewer.appendChild(renderer.domElement);
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-const gridHelper = new THREE.GridHelper(200, 50, 0x555555, 0x333333);
+const gridHelper = new THREE.GridHelper(200, 50, 0x999999, 0xcccccc);
 scene.add(gridHelper);
 
 const loader = new THREE.STLLoader();

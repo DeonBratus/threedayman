@@ -10,6 +10,58 @@ body {
   align-items: center;
   height: 100vh;
   overflow: hidden;
+  flex-direction: column;
+}
+
+/* Шапка */
+header {
+  width: 87.5%; /* Уменьшаем ширину шапки до 80% */
+  border-radius: 10px;
+  max-width: 1500px; /* Максимальная ширина шапки */
+  background-color: #2c3e50; /* Темный фон */
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 0;
+  left: 50%; /* Центрируем шапку по горизонтали */
+  transform: translateX(-50%); /* Подтягиваем шапку влево, чтобы она была по центру */
+}
+
+/* Логотип */
+header .logo h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Навигация */
+header nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 20px;
+}
+
+header nav ul li {
+  margin: 0;
+}
+
+header nav ul li a {
+  text-decoration: none;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+header nav ul li a:hover {
+  color: #1abc9c;
 }
 
 /* Основной контейнер */
@@ -20,6 +72,7 @@ body {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   overflow: hidden;
+  margin-top: 80px; /* Отступ от шапки */
 }
 
 /* Секция проектов */
