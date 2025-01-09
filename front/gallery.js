@@ -1,43 +1,72 @@
-async function loadGallery() {
+async function loadProjects() {
   try {
-    const response = await fetch('/api/tdim/gallery');
+    const response = await fetch('/api/proj/list');
     if (!response.ok) {
-      throw new Error(`Failed to fetch gallery info: ${response.statusText}`);
+      throw new Error(`Failed to fetch projects: ${response.statusText}`);
     }
 
-    const galleryData = await response.json();
-    const gallery = document.getElementById('gallery');
+    const projects = await response.json();
+    const projectsList = document.getElementById('projects');
 
-    galleryData.forEach(file => {
+    projects.forEach(project => {
+      const listItem = document.createElement('li');
+      listItem.textContent = project.projname;
+      listItem.dataset.projectName = project.projname;
+      listItem.onclick = () => loadModels(project.projname);
+
+      projectsList.appendChild(listItem);
+    });
+  } catch (error) {
+    console.error('Error loading projects:', error);
+    const projectsList = document.getElementById('projects');
+    projectsList.innerHTML = '<p style="color: red;">Failed to load projects.</p>';
+  }
+}
+
+async function loadModels(projectName) {
+  try {
+    const response = await fetch(`/api/proj/?proj_name=${projectName}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch models for project ${projectName}: ${response.statusText}`);
+    }
+
+    const models = await response.json();
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = ''; // Очистка галереи перед загрузкой новых моделей
+
+    models.forEach(model => {
       const item = document.createElement('div');
       item.className = 'gallery-item';
 
       const img = document.createElement('img');
-      img.src = `/uploaded_files/${file.picture_path.replace('uploaded_files/', '')}`;
-      img.alt = file.filename;
+      img.src = `/uploaded_files/${model.picture_path.replace('uploaded_files/', '')}`;
+      img.alt = model.filename;
 
       const title = document.createElement('h3');
-      title.textContent = file.filename;
+      title.textContent = model.filename;
+
+      const description = document.createElement('p');
+      description.textContent = model.description;
 
       const date = document.createElement('p');
-      date.textContent = `Uploaded: ${new Date(file.date_upload).toLocaleDateString()}`;
+      date.textContent = `Uploaded: ${new Date(model.date_upload).toLocaleDateString()}`;
 
-      // Добавление события клика для перехода на страницу просмотра модели
       item.onclick = () => {
-        window.location.href = `/static/model-viewer.html?model_id=${file.file_id}`;
+        window.location.href = `/static/model-viewer.html?model_id=${model.file_id}`;
       };
 
       item.appendChild(img);
       item.appendChild(title);
+      item.appendChild(description);
       item.appendChild(date);
 
       gallery.appendChild(item);
     });
   } catch (error) {
-    console.error('Error loading gallery:', error);
+    console.error('Error loading models:', error);
     const gallery = document.getElementById('gallery');
-    gallery.innerHTML = '<p style="color: red;">Failed to load gallery.</p>';
+    gallery.innerHTML = '<p style="color: red;">Failed to load models.</p>';
   }
 }
 
-loadGallery();
+loadProjects();

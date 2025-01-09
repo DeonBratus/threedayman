@@ -3,14 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gallery</title>
-  <link rel="stylesheet" href="styles/gallery_styles.css"> <!-- Подключение общего CSS -->
+  <title>Project & Model Gallery</title>
+  <link rel="stylesheet" href="styles/gallery_styles.css">
 </head>
 <body>
-  <div class="stars"></div>
-  <button class="upload-btn" onclick="window.location.href='/static/upload.html'">Upload Model</button>
-  <h1>3D Model Gallery</h1>
-  <div class="gallery" id="gallery"></div>
-  <script src="gallery.js"></script> <!-- Подключение JS -->
+  <div class="container">
+    <!-- Секция проектов -->
+    <div class="projects-list">
+      <h2>Projects</h2>
+      <ul id="projects"></ul>
+    </div>
+
+    <!-- Секция галереи моделей -->
+    <div class="models-gallery">
+      <h2>Models</h2>
+      <div class="gallery" id="gallery"></div>
+    </div>
+  </div>
+  <script src="gallery.js"></script>
 </body>
 </html>

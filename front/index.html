@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .projects-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .project-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 200px;
+      text-align: center;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .project-card img {
+      width: 100%;
+      height: auto;
+    }
+    .models-container {
+      margin-top: 20px;
+    }
+    .model-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Projects</h1>
+  <div id="projects" class="projects-container"></div>
+  <h2>Models in Project</h2>
+  <div id="models" class="models-container"></div>
+
+  <script>
+    // Base API URL
+    const API_BASE = '/api/proj';
+
+    // Fetch projects list and render
+    async function fetchProjects() {
+      try {
+        const response = await fetch(`${API_BASE}/list`);
+        const projects = await response.json();
+
+        const projectsContainer = document.getElementById('projects');
+        projects.forEach(project => {
+          const projectCard = document.createElement('div');
+          projectCard.className = 'project-card';
+          projectCard.innerHTML = `
+            <img src="${project.picture_path}" alt="${project.projname}">
+            <p>${project.projname}</p>
+          `;
+          projectCard.addEventListener('click', () => fetchProjectModels(project.projname));
+          projectsContainer.appendChild(projectCard);
+        });
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    }
+
+    // Fetch models of a specific project and render
+    async function fetchProjectModels(projName) {
+      try {
+        const response = await fetch(`${API_BASE}/?proj_name=${encodeURIComponent(projName)}`);
+        const models = await response.json();
+
+        const modelsContainer = document.getElementById('models');
+        modelsContainer.innerHTML = ''; // Clear previous models
+        models.forEach(model => {
+          const modelCard = document.createElement('div');
+          modelCard.className = 'model-card';
+          modelCard.innerHTML = `
+            <p><strong>${model.filename}</strong></p>
+            <p>Description: ${model.description}</p>
+            <p>Size: ${model.file_size} bytes</p>
+            <p>Uploaded: ${model.date_upload}</p>
+            <a href="${model.filepath}" download>Download File</a>
+          `;
+          modelsContainer.appendChild(modelCard);
+        });
+      } catch (error) {
+        console.error('Error fetching project models:', error);
+      }
+    }
+
+    // Initialize the page
+    fetchProjects();
+  </script>
+</body>
+</html>
