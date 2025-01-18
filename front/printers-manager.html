@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Printer Manager</title>
+  <link rel="stylesheet" href="styles/gallery_styles.css">
+  <script defer src="printers.js"></script>
+</head>
+<body>
+  <!-- Шапка сайта -->
+  <header>
+    <div class="logo">
+      <h1><a href="/static/gallery.html">NetPrint Studio</a></h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/static/printers-manager.html">Printers</a></li>
+        <li><a href="/static/create_project.html">Create Project</a></li>
+        <li><a href="/static/upload.html">Upload Model</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <!-- Секция принтеров -->
+    <div class="models-gallery">
+      <h2>Printers</h2>
+      <div class="gallery" id="printer-gallery">
+        <!-- Карточки принтеров будут добавлены здесь -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Кнопка для открытия формы -->
+  <button id="open-form-btn" class="open-form-btn">+</button>
+
+  <!-- Форма добавления принтера -->
+  <div id="printer-form-container" class="form-container">
+    <form id="printer-form">
+      <label for="name">Printer Name:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="addr">Printer Address:</label>
+      <input type="text" id="addr" name="addr" required>
+
+      <label for="clustername">Cluster Name:</label>
+      <input type="text" id="clustername" name="clustername" required>
+
+      <button type="submit">Add Printer</button>
+      <button type="button" id="close-form-btn">Close</button>
+    </form>
+  </div>
+</body>
+</html>

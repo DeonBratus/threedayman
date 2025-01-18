@@ -5,103 +5,211 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Загрузка модели</title>
     <style>
+        /* Основной стиль страницы */
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
             background-color: #f7f7f7;
+            padding-top: 60px; /* Учитываем высоту шапки */
+            display: flex;
+            justify-content: center;
         }
 
+
+        /* Шапка */
+        header {
+        width: 87.5%; /* Уменьшаем ширину шапки до 80% */
+        border-radius: 10px;
+        max-width: 1500px; /* Максимальная ширина шапки */
+        background-color: #2c3e50; /* Темный фон */
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        position: absolute;
+        top: 0;
+        left: 50%; /* Центрируем шапку по горизонтали */
+        transform: translateX(-50%); /* Подтягиваем шапку влево, чтобы она была по центру */
+        }
+
+        header .logo h1 {
+        text-decoration: none;
+        color: rgb(0, 0, 0);
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        }
+
+        header .logo h1 a {
+        text-decoration: none;
+        color: white;
+        }
+
+        /* Навигация */
+        header nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        gap: 20px;
+        }
+
+        header nav ul li {
+        margin: 0;
+        }
+
+        header nav ul li a {
+        text-decoration: none;
+        color: white;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: color 0.3s ease;
+        }
+
+        header nav ul li a:hover {
+        color: #1abc9c;
+        }
+       /* Основной контейнер */
+        /* Основной контейнер */
+    .container {
+        background-color: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 700px; /* Максимальная ширина */
+        box-sizing: border-box;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: inline-block;
+    }
+
+    input, textarea, button, select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    button {
+        background-color: #334b5b;
+        color: white;
+        cursor: pointer;
+        border: none;
+    }
+
+    button:hover {
+        background-color: #3e484f;
+    }
+
+    .button-home {
+        background-color: #6f6f6f;
+        text-align: center;
+        display: block;
+        padding: 12px;
+        text-decoration: none;
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+
+    .button-home:hover {
+        background-color: #565656;
+    }
+
+    textarea {
+        resize: vertical;
+        height: 120px;
+    }
+
+    #message {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .preview {
+        display: block;
+        margin-top: 10px;
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #ccc;
+        padding: 5px;
+    }
+
+    #remove-preview {
+        cursor: pointer;
+        color: red;
+        font-size: 14px;
+        margin-top: 5px;
+        display: none;
+    }
+
+    .project-option {
+        display: flex;
+        align-items: center;
+    }
+
+    .project-option img {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+        border-radius: 4px;
+    }
+
+    /* Добавление адаптивности */
+    @media (max-width: 600px) {
         .container {
-            background-color: white;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px;
         }
 
         h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        label {
-            font-weight: bold;
+            font-size: 20px;
         }
 
         input, textarea, button, select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            font-size: 16px;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
+            font-size: 14px;
         }
 
         .button-home {
-            background-color: #007bff;
-            margin-top: 10px;
-        }
-
-        .button-home:hover {
-            background-color: #0056b3;
-        }
-
-        textarea {
-            resize: vertical;
-            height: 100px;
-        }
-
-        #message {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .preview {
-            display: block;
-            margin-top: 10px;
-            max-width: 100%;
-            height: auto;
-            border: 1px solid #ccc;
-            padding: 5px;
-        }
-
-        #remove-preview {
-            cursor: pointer;
-            color: red;
             font-size: 14px;
-            margin-top: 5px;
-            display: none;
+            padding: 10px;
         }
-
-        .project-option {
-            display: flex;
-            align-items: center;
-        }
-
-        .project-option img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-            border-radius: 4px;
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
+  <!-- Шапка сайта -->
+  <header>
+    <div class="logo">
+      <h1><a href="/static/gallery.html">NetPrint Studio</a></h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/static/printers-manager.html">Printers</a></li>
+        <li><a href="/static/create_project.html">Create Project</a></li>
+        <li><a href="/static/upload.html">Upload Model</a></li>
+      </ul>
+    </nav>
+  </header>
+
+    <!-- Контейнер с формой загрузки модели -->
     <div class="container">
         <h1>Загрузите модель</h1>
         <form id="upload-form" enctype="multipart/form-data">
