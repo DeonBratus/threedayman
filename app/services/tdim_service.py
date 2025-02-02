@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
 from config import UPLOAD_DIRECTORY
 from dals.tdim_dals import TdimDals
+
 '''
 Services of 3d-project. This service for only manage files
 There is logic of managment files only.
@@ -53,8 +54,22 @@ class TdimService:
             execute_code = False
         return errs, execute_code
     
+
     async def get_model_viewer(self, model_id, db: AsyncSession):
         async with db as session:
             tdim_dals = TdimDals(session)
             res = await tdim_dals.get_data_for_viewer(model_id=model_id)
             return res
+
+
+    async def delete_model(self, tdim_id, db: AsyncSession):
+        #path = './uploaded_files/sfs/d10be5c185992b2c236fe3e9908080e0(4).stl'
+        async with db as session:
+            tdim_dals = TdimDals(session)
+            path = await tdim_dals.get_path_from_id(tdim_id)
+            picpath = await tdim_dals.get_picpath_from_id(tdim_dals)
+            #os.remove(path[0])
+            #os.remove(picpath[0])
+            #os.remove('niva_gear')
+            #del_res = await tdim_dals.delete_tdim(tdim_id)
+            return path, picpath

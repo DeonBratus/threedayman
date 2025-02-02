@@ -1,7 +1,7 @@
 #Database access layer for work with database aka repository
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import update, and_, select
+from sqlalchemy import update, and_, select, delete
 from models.tdim_dbmodel import TdimModel
 
 class TdimDals:
@@ -76,3 +76,23 @@ class TdimDals:
         res = await self.db_session.execute(query)
         files_info = res.scalars().all()
         return files_info
+    
+
+    async def get_path_from_id(self, model_id):
+        query = select(TdimModel.filepath).where(TdimModel.file_id == model_id)
+        res = await self.db_session.execute(query)
+        filepath = res.scalars().first()  # Возвращает первое значение или None
+        return filepath
+
+    async def get_picpath_from_id(self, model_id):
+        query = select(TdimModel.picture_path).where(TdimModel.file_id == model_id)
+        res = await self.db_session.execute(query)
+        filepath = res.scalars().first()  # Возвращает первое значение или None
+        return filepath
+
+
+    async def delete_tdim(self, model_id):
+        query = delete(TdimModel).where(TdimModel.file_id == model_id)
+        res = await self.db_session.execute(query)
+        await self.db_session.commit()
+        return res.rowcount

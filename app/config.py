@@ -1,2 +1,2 @@
 UPLOAD_DIRECTORY = "uploaded_files"
-DATABASE_URL = "postgresql+asyncpg://postgres:postgres@0.0.0.0:5432/postgres"
+DATABASE_URL = "postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/postgres"

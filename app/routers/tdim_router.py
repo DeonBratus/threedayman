@@ -74,3 +74,10 @@ async def get_info_model(model_id, db: AsyncSession = Depends(get_db)):
             "Uploaded_date": model_data[0].date_upload,
             #"Filepath": model_data[0].filepath
                 }
+
+
+@tdim_router.delete("/delete")
+async def delete_model(model_id, db: AsyncSession = Depends(get_db)):
+    tdim_service = TdimService()
+    res = await tdim_service.delete_model(model_id, db)
+    return res
