@@ -9,23 +9,21 @@ from dals.tdim_dals import TdimDals
 '''
 Services of 3d-project. This service for only manage files
 There is logic of managment files only.
+CRUD --> UGER
 '''
 
 class TdimService:
 
-    async def upload_file(self, file: BinaryIO, data: dict, db: AsyncSession) -> dict | bool:
+    async def upload_new_tdim(self, file: BinaryIO, data: dict, db: AsyncSession) -> dict | bool:
         complex_path = f"{UPLOAD_DIRECTORY}/{data["filename"]}"
         os.makedirs(complex_path, exist_ok=True)
         try:
             file_path = os.path.join(complex_path, data["raw_filename"])
-            msg, ok = await self.file_existing_check(filename=data["raw_filename"], name=data["filename"])
-            # Check uploaded file
+            msg, ok = await self.__file_existing_check(filename=data["raw_filename"], name=data["filename"])
             if not ok: 
                 return msg, ok
-            # Save file to folder
             with open(file_path, "wb") as f:
                 f.write(file.read())
-            # Send data to db
             upf = await self.__send_data_to_db(data, file_path, complex_path, db)
         except ConnectionError as e:
             raise e
@@ -47,7 +45,7 @@ class TdimService:
                 return up_file
 
 
-    async def file_existing_check(self, filename: str, name: str) ->  dict | bool :
+    async def __file_existing_check(self, filename: str, name: str) ->  dict | bool :
         errs, execute_code = [], True
         if filename in os.listdir(f"{UPLOAD_DIRECTORY}/{name}"):
             errs.append({"existing error": "file is exist"})
@@ -55,21 +53,23 @@ class TdimService:
         return errs, execute_code
     
 
-    async def get_model_viewer(self, model_id, db: AsyncSession):
+    async def get_tdimfile(self, model_id, db: AsyncSession):
         async with db as session:
             tdim_dals = TdimDals(session)
             res = await tdim_dals.get_data_for_viewer(model_id=model_id)
             return res
 
 
-    async def delete_model(self, tdim_id, db: AsyncSession):
-        #path = './uploaded_files/sfs/d10be5c185992b2c236fe3e9908080e0(4).stl'
+    async def remove_model(self, tdim_id, db: AsyncSession):
         async with db as session:
             tdim_dals = TdimDals(session)
-            path = await tdim_dals.get_path_from_id(tdim_id)
-            picpath = await tdim_dals.get_picpath_from_id(tdim_dals)
-            #os.remove(path[0])
-            #os.remove(picpath[0])
-            #os.remove('niva_gear')
-            #del_res = await tdim_dals.delete_tdim(tdim_id)
-            return path, picpath
+            data = await tdim_dals.get_path_from_id(tdim_id)
+            try:
+                os.remove(data["filepath"])
+                os.remove(data["picpath"])
+                os.removedirs(f"{UPLOAD_DIRECTORY}/{data["filename"]}")
+            except KeyError as e:
+                ...
+            
+            del_res = await tdim_dals.delete_tdim(tdim_id)
+            return {"data": data, "count-del": del_res}

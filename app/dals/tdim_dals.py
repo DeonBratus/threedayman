@@ -5,6 +5,7 @@ from sqlalchemy import update, and_, select, delete
 from models.tdim_dbmodel import TdimModel
 
 class TdimDals:
+    
     def __init__(self, db_session: AsyncSession):
         self.db_session = db_session
 
@@ -70,7 +71,6 @@ class TdimDals:
         ]
 
 
-
     async def get_data_for_viewer(self, model_id):
         query = select(TdimModel).where(TdimModel.file_id == model_id)
         res = await self.db_session.execute(query)
@@ -79,16 +79,10 @@ class TdimDals:
     
 
     async def get_path_from_id(self, model_id):
-        query = select(TdimModel.filepath).where(TdimModel.file_id == model_id)
+        query = select(TdimModel.filepath, TdimModel.picture_path, TdimModel.filename).where(TdimModel.file_id == model_id)
         res = await self.db_session.execute(query)
-        filepath = res.scalars().first()  # Возвращает первое значение или None
-        return filepath
-
-    async def get_picpath_from_id(self, model_id):
-        query = select(TdimModel.picture_path).where(TdimModel.file_id == model_id)
-        res = await self.db_session.execute(query)
-        filepath = res.scalars().first()  # Возвращает первое значение или None
-        return filepath
+        data = res.all()
+        return {"filepath": data[0][0], "picpath": data[0][1], "filename": data[0][2]}
 
 
     async def delete_tdim(self, model_id):

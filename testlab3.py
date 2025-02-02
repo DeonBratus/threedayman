@@ -1,3 +1,3 @@
 import os 
 
-os.removedirs("uploaded_files/sfs")
+os.removedirs("uploaded_files/as")
