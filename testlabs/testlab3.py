@@ -4,14 +4,14 @@ import pyvista as pv
 from scipy.spatial import cKDTree
 
 # Загрузка STL-моделей
-mesh_old = trimesh.load('korito_final.stl')
-mesh_new = trimesh.load('korito_v5252.stl')
+mesh_old = trimesh.load('new.stl')
+mesh_new = trimesh.load('new-new.stl')
 
 if not mesh_old.is_watertight:
     raise ValueError("Старая модель должна быть водонепроницаемой (watertight) для корректного анализа.")
 
 # Задаем порог для определения изменений
-threshold = 0.01
+threshold = 0.6
 
 # --- Определение новых вершин ---
 tree_old = cKDTree(mesh_old.vertices)
@@ -66,12 +66,13 @@ else:
     extruded_mesh = None
 
 # --- Визуализация ---
-plotter = pv.Plotter()
+# Создаем Plotter с off_screen=True
+plotter = pv.Plotter(off_screen=True)
 
-# Подсвечиваем саму модель для контекста
-faces_new = np.hstack([np.full((mesh_new.faces.shape[0], 1), 3), mesh_new.faces]).astype(np.int64)
-pv_mesh_new = pv.PolyData(mesh_new.vertices, faces_new)
-plotter.add_mesh(pv_mesh_new, color='white', opacity=0.5, show_edges=True)
+# Отображаем старую модель с прозрачностью
+faces_old = np.hstack([np.full((mesh_old.faces.shape[0], 1), 3), mesh_old.faces]).astype(np.int64)
+pv_mesh_old = pv.PolyData(mesh_old.vertices, faces_old)
+plotter.add_mesh(pv_mesh_old, color='gray', opacity=0.3, show_edges=True, label="Старая модель")
 
 # Подсвечиваем вырезы (красный)
 if cut_mesh:
@@ -81,5 +82,13 @@ if cut_mesh:
 if extruded_mesh:
     plotter.add_mesh(extruded_mesh, color='green', opacity=0.8, show_edges=True, label='Добавленные элементы (экструзия)')
 
+# Настройка камеры и легенды
 plotter.add_legend()
+plotter.set_background('white')
+plotter.view_isometric()  # Вид сверху, чтобы увидеть модель лучше
+
+# Сохранение как изображение
+plotter.screenshot('model_visualization-2.png')  # Сохранение изображения
+
+# Отображение (если нужно показать окно на экране)
 plotter.show()
