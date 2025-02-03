@@ -9,7 +9,7 @@ from dals.tdim_dals import TdimDals
 '''
 Services of 3d-project. This service for only manage files
 There is logic of managment files only.
-CRUD --> UGER
+CRUD --> UGERD
 '''
 
 class TdimService:
@@ -53,11 +53,19 @@ class TdimService:
         return errs, execute_code
     
 
-    async def get_tdimfile(self, model_id, db: AsyncSession):
+    async def get_tdim_model(self, model_id, db: AsyncSession):
         async with db as session:
             tdim_dals = TdimDals(session)
             res = await tdim_dals.get_data_for_viewer(model_id=model_id)
             return res
+
+    
+    async def edit_model(self):
+        ...
+    
+
+    async def reload_model(self):
+        ...
 
 
     async def remove_model(self, tdim_id, db: AsyncSession):

@@ -8,7 +8,6 @@ main_router = APIRouter()
 main_router.include_router(printers_api)
 
 
-
 app = FastAPI()
 
 
@@ -22,7 +21,6 @@ app.add_middleware(
     allow_methods=["*"],  # Разрешить все HTTP-методы (GET, POST, DELETE и т.д.)
     allow_headers=["*"],  # Разрешить все заголовки
 )
-
 
 app.include_router(main_router)
 app.mount("/static", StaticFiles(directory="front"), name="static")

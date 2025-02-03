@@ -3,14 +3,16 @@ from fastapi.staticfiles import StaticFiles
 import uvicorn
 from routers.tdim_router import tdim_router
 from routers.project_router import proj_api
+from routers.gallery_router import gallery_router
 
 main_router = APIRouter()
 main_router.include_router(tdim_router)
 main_router.include_router(proj_api)
+main_router.include_router(gallery_router)
 
 app = FastAPI()
 app.include_router(main_router)
-app.include_router
+
 app.mount("/static", StaticFiles(directory="front"), name="static")
 app.mount("/uploaded_files", StaticFiles(directory="uploaded_files"), name="uploaded_files")
 

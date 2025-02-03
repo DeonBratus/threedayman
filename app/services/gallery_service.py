@@ -23,6 +23,7 @@ class GalleryService:
             res = await tdim_dals.get_datapics_gallery()
             return res
     
+    
     async def get_tdim_info_gal(self, db: AsyncSession):
         async with db as session:
             tdim_dals = TdimDals(session)
