@@ -2,24 +2,27 @@
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import update, and_, select, delete
+
+from schemes.tdim_scheme import TdimSchemeUpdate
 from models.tdim_dbmodel import TdimModel
+from sqlalchemy.exc import NoResultFound
 
 class TdimDals:
     
     def __init__(self, db_session: AsyncSession):
-        self.db_session = db_session
+        self.db_session: AsyncSession = db_session
 
     
-    async def upload_file(self, tdim_info: dict) -> TdimModel:
+    async def upload_file(self, tdim_data: dict) -> TdimModel:
         
         up_file = TdimModel (
-            filename=tdim_info["filename"],
-            filepath=tdim_info["filepath"],
-            file_size=tdim_info["size"],
-            description=tdim_info["desc"],
-            date_upload=tdim_info["upload_date"],
-            picture_path=tdim_info["picture_path"],
-            proj_name=tdim_info["proj_name"]
+            filename=tdim_data["filename"],
+            filepath=tdim_data["filepath"],
+            file_size=tdim_data["size"],
+            description=tdim_data["desc"],
+            date_upload=tdim_data["upload_date"],
+            picture_path=tdim_data["picture_path"],
+            proj_name=tdim_data["proj_name"]
         )
 
         self.db_session.add(up_file)
@@ -90,3 +93,29 @@ class TdimDals:
         res = await self.db_session.execute(query)
         await self.db_session.commit()
         return res.rowcount
+    
+
+    async def edit_tdim_data(self, tdim_data: dict):
+        tdim_id = tdim_data.get("tdim_id")
+
+        if not tdim_id:
+            raise ValueError("Не указан file_id для обновления записи")
+
+        query = select(TdimModel).where(TdimModel.file_id == tdim_id)
+        res = await self.db_session.execute(query)
+        tdim_rec = res.scalars().first()
+
+        if not tdim_rec:
+            raise NoResultFound(f"Запись с id {tdim_id} не найдена")
+        
+        if 'filename' in tdim_data and tdim_data['filename'] is not None:
+            tdim_rec.filename = tdim_data['filename']
+        if 'desc' in tdim_data and tdim_data['desc'] is not None:
+            tdim_rec.description = tdim_data['desc']
+        if 'proj_name' in tdim_data and tdim_data['proj_name'] is not None:
+            tdim_rec.proj_name = tdim_data['proj_name']
+
+        await self.db_session.flush()
+        await self.db_session.commit()
+
+        return tdim_rec.to_dict()

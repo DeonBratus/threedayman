@@ -3,8 +3,10 @@ from typing import BinaryIO
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
+
 from config import UPLOAD_DIRECTORY
 from dals.tdim_dals import TdimDals
+from schemes.tdim_scheme import TdimSchemeUpdate
 
 '''
 Services of 3d-project. This service for only manage files
@@ -60,8 +62,12 @@ class TdimService:
             return res
 
     
-    async def edit_model(self):
-        ...
+    async def edit_model(self, tdim_scheme: TdimSchemeUpdate, db: AsyncSession):
+        async with db as session:
+            tdim_data = tdim_scheme.model_dump()
+            tdim_dals = TdimDals(session)
+            res = await tdim_dals.edit_tdim_data(tdim_data=tdim_data)
+            return {"msg": f"{res}"}
     
 
     async def reload_model(self):

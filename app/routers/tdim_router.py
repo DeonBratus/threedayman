@@ -7,7 +7,7 @@ import os
 from db.database import get_db
 from services.tdim_service import TdimService
 from services.gallery_service import GalleryService
-from schemes.tdim_scheme import TdimSchemeUpld
+from schemes.tdim_scheme import TdimSchemeUpld, TdimSchemeUpdate
 from config import UPLOAD_DIRECTORY
 
 
@@ -17,7 +17,10 @@ os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
 
 @tdim_router.post('/')
-async def upload_tdim( td_model: Annotated[TdimSchemeUpld, Depends()], db: AsyncSession = Depends(get_db)):
+async def upload_tdim(
+    td_model: Annotated[TdimSchemeUpld,
+    Depends()], db: AsyncSession = Depends(get_db
+    )):
 
     tdiminfo = {
         "filename": td_model.filename,
@@ -67,9 +70,15 @@ async def get_data_about_tdim(model_id, db: AsyncSession = Depends(get_db)):
     }
 
 
-@tdim_router.post("/update")
-async def update_model():
-    ...
+@tdim_router.put("/edit")
+async def edit_data_model(
+    td_model: Annotated[TdimSchemeUpdate, Depends()],
+    db: AsyncSession = Depends(get_db)
+    ):
+
+    tdim_service = TdimService()
+    res = await tdim_service.edit_model(td_model, db)
+    return {"msg": f"{res}"}
 
 
 @tdim_router.post("/update_version")
