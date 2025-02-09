@@ -119,3 +119,7 @@ class TdimDals:
         await self.db_session.commit()
 
         return tdim_rec.to_dict()
+
+
+    async def reload_tdim(self, tdim_id):
+        ...

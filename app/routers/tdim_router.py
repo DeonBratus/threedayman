@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
@@ -75,11 +75,16 @@ async def edit_data_model(
     td_model: Annotated[TdimSchemeUpdate, Depends()],
     db: AsyncSession = Depends(get_db)
     ):
-
     tdim_service = TdimService()
-    res = await tdim_service.edit_model(td_model, db)
+    res = await tdim_service.edit_data_model(td_model, db)
     return {"msg": f"{res}"}
 
+
+@tdim_router.put("edit_tdim")
+async def edit_tdim_model(td_model_id, tdimodel: UploadFile,  db: AsyncSession = Depends(get_db)):
+    tdim_service = TdimService()
+    res = await tdim_service.reload_model(tdim_id=td_model_id, tdimodel=tdimodel, db=db)
+    return res
 
 @tdim_router.post("/update_version")
 async def version_update():

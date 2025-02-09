@@ -1,6 +1,7 @@
 import os
 from typing import BinaryIO
 from uuid import UUID
+from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
 
@@ -62,7 +63,7 @@ class TdimService:
             return res
 
     
-    async def edit_model(self, tdim_scheme: TdimSchemeUpdate, db: AsyncSession):
+    async def edit_data_model(self, tdim_scheme: TdimSchemeUpdate, db: AsyncSession):
         async with db as session:
             tdim_data = tdim_scheme.model_dump()
             tdim_dals = TdimDals(session)
@@ -70,8 +71,15 @@ class TdimService:
             return {"msg": f"{res}"}
     
 
-    async def reload_model(self):
-        ...
+    async def reload_model(self, tdim_id, tdimodel: UploadFile, db: AsyncSession):
+        async with db as session:
+            tdim_path = ""
+            tdim_dals = TdimDals(session)
+            data = await tdim_dals.get_path_from_id(tdim_id)
+            tdim_path = data["filepath"]
+            with open(tdim_path, "wb") as f:
+                f.write(tdimodel.file.read())
+            return tdim_path
 
 
     async def remove_model(self, tdim_id, db: AsyncSession):
