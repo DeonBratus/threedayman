@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import update, and_, select, delete
 
 from schemes.tdim_scheme import TdimSchemeUpdate
-from models.tdim_dbmodel import TdimModel
+from app.models.db_model import TdimFiles
 from sqlalchemy.exc import NoResultFound
 
 class TdimDals:
@@ -13,9 +13,9 @@ class TdimDals:
         self.db_session: AsyncSession = db_session
 
     
-    async def upload_file(self, tdim_data: dict) -> TdimModel:
+    async def upload_file(self, tdim_data: dict) -> TdimFiles:
         
-        up_file = TdimModel (
+        up_file = TdimFiles (
             filename=tdim_data["filename"],
             filepath=tdim_data["filepath"],
             file_size=tdim_data["size"],
@@ -34,10 +34,10 @@ class TdimDals:
         """Получение всех файлов из базы данных."""
         try:
             query = select(
-                TdimModel.file_id,
-                TdimModel.filename,
-                TdimModel.picture_path,
-                TdimModel.date_upload
+                TdimFiles.file_id,
+                TdimFiles.filename,
+                TdimFiles.picture_path,
+                TdimFiles.date_upload
             )
             result = await self.db_session.execute(query)
             files_info = result.all()
@@ -56,10 +56,10 @@ class TdimDals:
 
     async def get_datatdim_gallery(self) -> List[dict]:
         query = select(
-            TdimModel.file_id,
-            TdimModel.filename,
-            TdimModel.filepath,
-            TdimModel.date_upload
+            TdimFiles.file_id,
+            TdimFiles.filename,
+            TdimFiles.filepath,
+            TdimFiles.date_upload
         )
         res = await self.db_session.execute(query)
         res_info = res.all()
@@ -75,21 +75,21 @@ class TdimDals:
 
 
     async def get_data_for_viewer(self, model_id):
-        query = select(TdimModel).where(TdimModel.file_id == model_id)
+        query = select(TdimFiles).where(TdimFiles.file_id == model_id)
         res = await self.db_session.execute(query)
         files_info = res.scalars().all()
         return files_info
     
 
     async def get_path_from_id(self, model_id):
-        query = select(TdimModel.filepath, TdimModel.picture_path, TdimModel.filename).where(TdimModel.file_id == model_id)
+        query = select(TdimFiles.filepath, TdimFiles.picture_path, TdimFiles.filename).where(TdimFiles.file_id == model_id)
         res = await self.db_session.execute(query)
         data = res.all()
         return {"filepath": data[0][0], "picpath": data[0][1], "filename": data[0][2]}
 
 
     async def delete_tdim(self, model_id):
-        query = delete(TdimModel).where(TdimModel.file_id == model_id)
+        query = delete(TdimFiles).where(TdimFiles.file_id == model_id)
         res = await self.db_session.execute(query)
         await self.db_session.commit()
         return res.rowcount
@@ -101,7 +101,7 @@ class TdimDals:
         if not tdim_id:
             raise ValueError("Не указан file_id для обновления записи")
 
-        query = select(TdimModel).where(TdimModel.file_id == tdim_id)
+        query = select(TdimFiles).where(TdimFiles.file_id == tdim_id)
         res = await self.db_session.execute(query)
         tdim_rec = res.scalars().first()
 

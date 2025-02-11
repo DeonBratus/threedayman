@@ -15,42 +15,17 @@ tdim_router = APIRouter(prefix='/api/tdim')
 
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
-
+# creating model obj
 @tdim_router.post('/')
-async def upload_tdim(
-    td_model: Annotated[TdimSchemeUpld,
-    Depends()], db: AsyncSession = Depends(get_db
-    )):
+async def upload_tdim(td_model: Annotated[TdimSchemeUpld, Depends()], db: AsyncSession = Depends(get_db)):
+    ...
 
-    tdiminfo = {
-        "filename": td_model.filename,
-        "desc": td_model.desc,
-        "raw_filename": td_model.td_file.filename,
-        "picture_path": td_model.prewiev_picture.filename,
-        "proj_name": td_model.proj_name
-    }
-
-    file_msg, ok = await TdimService().upload_new_tdim(
-        file=td_model.td_file.file,
-        data=tdiminfo, 
-        db=db
-    )
-
-    await GalleryService().upload_preview_picture(
-        td_model.prewiev_picture.file,
-        td_model.filename,
-        td_model.prewiev_picture.filename)
-
-    if not ok:
-        raise HTTPException(
-            status_code=400,
-            detail=file_msg)
-    
-    return tdiminfo
-
+@tdim_router.get('/list')
+async def get_tdim_list():
+    ...
 
 @tdim_router.get("/model_viewer")
-async def get_tdimodel(
+async def get_tdim_by_id(
     model_id,
     db: AsyncSession = Depends(get_db)
     ):
@@ -60,7 +35,7 @@ async def get_tdimodel(
 
 
 @tdim_router.get("/model_viewer/info")
-async def get_data_about_tdim(model_id, db: AsyncSession = Depends(get_db)):
+async def get_data_by_id(model_id, db: AsyncSession = Depends(get_db)):
     model_data = await TdimService().get_tdim_model(model_id=model_id, db=db)
     return {"Filename": model_data[0].filename,
             "Size": model_data[0].file_size,
@@ -71,7 +46,7 @@ async def get_data_about_tdim(model_id, db: AsyncSession = Depends(get_db)):
 
 
 @tdim_router.put("/edit")
-async def edit_data_model(
+async def edit_data_tdim(
     td_model: Annotated[TdimSchemeUpdate, Depends()],
     db: AsyncSession = Depends(get_db)
     ):
@@ -85,6 +60,7 @@ async def edit_tdim_model(td_model_id, tdimodel: UploadFile,  db: AsyncSession =
     tdim_service = TdimService()
     res = await tdim_service.reload_model(tdim_id=td_model_id, tdimodel=tdimodel, db=db)
     return res
+
 
 @tdim_router.post("/update_version")
 async def version_update():

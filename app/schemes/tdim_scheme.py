@@ -2,9 +2,8 @@
 There is data schemes for work with 3D-models in the project. 
 '''
 from pydantic import BaseModel
-from datetime import datetime, date
+from datetime import date
 from fastapi import UploadFile, File
-from typing import BinaryIO
 from typing import Optional
 from uuid import UUID
 

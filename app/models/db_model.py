@@ -5,17 +5,17 @@ import uuid
 Base = declarative_base()
 
 
-class TdimModel(Base):
+class TdimFiles(Base):
     __tablename__ = "tdim_files"
 
     file_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     filename = Column(String, nullable=False)
     filepath = Column(String, nullable=False, unique=True)
-    description = Column(String, nullable=True)
-    picture_path = Column(String, nullable=True)
     file_size = Column(Integer, nullable=False)
     date_upload = Column(Date, nullable=False)
-    proj_name = Column(String, nullable=True, default="default_project")
+
+    model_id = Column(String, nullable=True, default="default_model")
+    model_version = Column(Integer, nullable=False, default=0)
 
     def to_dict(self):
         return {
@@ -26,9 +26,25 @@ class TdimModel(Base):
             "picture_path": self.picture_path,
             "file_size": self.file_size,
             "date_upload": self.date_upload.isoformat(),
-            "proj_name": str(self.proj_name),
+            "model_id": str(self.model_id),
         }
+
+
+class GlobalModel(Base):
+    __tablename__ = "models"
+    model_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    modelname = Column(String, nullable=False)
+    model_dirpath = Column(String, nullable=False)
+
+    picture_path = Column(String, nullable=True)
+
+    description = Column(String, nullable=True) # -> markdown md
+    date_upload = Column(Date, nullable=False)
+
+    current_version = Column(Integer, nullable=False, default=0)
     
+    project_id = Column(UUID(as_uuid=True))
+
 
 class ProjModel(Base):
     __tablename__ = "projects"

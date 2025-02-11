@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File System Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 3px;
+        }
+        .node text {
+            font: 12px sans-serif;
+        }
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 2px;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const data = {
+            "name": "root",
+            "type": "directory",
+            "children": [
+                {
+                    "name": "folder1",
+                    "type": "directory",
+                    "children": [
+                        {"name": "file1.txt", "type": "file"},
+                        {"name": "file2.txt", "type": "file"}
+                    ]
+                },
+                {
+                    "name": "folder2",
+                    "type": "directory",
+                    "children": [
+                        {"name": "file3.txt", "type": "file"}
+                    ]
+                }
+            ]
+        };
+
+        const width = 800;
+        const height = 600;
+
+        const svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        const treeLayout = d3.tree().size([width, height]);
+        const root = d3.hierarchy(data);
+        treeLayout(root);
+
+        const links = svg.selectAll(".link")
+            .data(root.links())
+            .enter().append("path")
+            .attr("class", "link")
+            .attr("d", d3.linkHorizontal()
+                .x(d => d.y)
+                .y(d => d.x));
+
+        const nodes = svg.selectAll(".node")
+            .data(root.descendants())
+            .enter().append("g")
+            .attr("class", "node")
+            .attr("transform", d => `translate(${d.y},${d.x})`);
+
+        nodes.append("circle")
+            .attr("r", 5);
+
+        nodes.append("text")
+            .attr("dy", "0.31em")
+            .attr("x", d => d.children ? -10 : 10)
+            .style("text-anchor", d => d.children ? "end" : "start")
+            .text(d => d.data.name);
+    </script>
+</body>
+</html>

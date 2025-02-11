@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File System Browser</title>
+    <!-- Подключаем Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        #file-system {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .file, .folder {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        .folder {
+            background-color: #e3f2fd;
+        }
+        .file {
+            background-color: #f5f5f5;
+        }
+        .file:hover, .folder:hover {
+            background-color: #ddd;
+        }
+        .icon {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        .folder .icon {
+            color: #1976d2;
+        }
+        .file .icon {
+            color: #4caf50;
+        }
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+        .back-button:hover {
+            background-color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <h1>File System Browser</h1>
+    <div id="file-system">
+        <button class="back-button" onclick="goBack()" style="display: none;">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <div id="content"></div>
+    </div>
+
+    <script>
+        const baseUrl = "http://localhost:8000/api/files";
+        let currentPath = "";
+
+        async function loadFiles(path = "") {
+            currentPath = path;
+            const response = await fetch(`${baseUrl}?path=${encodeURIComponent(path)}`);
+            const data = await response.json();
+            renderFiles(data);
+        }
+
+        function renderFiles(data) {
+            const contentDiv = document.getElementById("content");
+            const backButton = document.querySelector(".back-button");
+
+            // Показываем кнопку "Назад", если мы не в корневой папке
+            if (currentPath) {
+                backButton.style.display = "inline-block";
+            } else {
+                backButton.style.display = "none";
+            }
+
+            // Очищаем содержимое
+            contentDiv.innerHTML = "";
+
+            // Отображаем файлы и папки
+            data.items.forEach(item => {
+                const div = document.createElement("div");
+                div.className = item.type === "directory" ? "folder" : "file";
+                div.innerHTML = `
+                    <span class="icon">
+                        <i class="fas ${item.type === "directory" ? "fa-folder" : "fa-file"}"></i>
+                    </span>
+                    <span>${item.name}</span>
+                `;
+                div.onclick = () => {
+                    if (item.type === "directory") {
+                        loadFiles(item.path);
+                    } else {
+                        alert(`File clicked: ${item.name}`);
+                    }
+                };
+                contentDiv.appendChild(div);
+            });
+        }
+
+        function goBack() {
+            if (currentPath) {
+                const newPath = currentPath.split("/").slice(0, -1).join("/");
+                loadFiles(newPath);
+            }
+        }
+
+        // Загружаем корневую директорию при загрузке страницы
+        window.onload = () => loadFiles();
+    </script>
+</body>
+</html>
