@@ -4,5 +4,14 @@
     },
     "NetPrintSpb": {
         "192.168.31.204:7125": "ender3v2"
+    },
+    "string": {
+        "string": "string"
+    },
+    "sasdsad": {
+        "sdsadsd": "dsadsa"
+    },
+    "\u0441\u0442\u0440\u0438\u043d\u0433": {
+        "\u0441\u0442\u0440\u0438\u043d\u0433": "\u0441\u0442\u0440\u0438\u043d\u0433"
     }
 }

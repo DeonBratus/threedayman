@@ -13,13 +13,17 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:8000", 
+    allow_origins=[
+        "*"
+        "http://127.0.0.1:8000", 
         "http://0.0.0.0:8000", 
-        "http://192.168.31.66:8000"]
+        "http://192.168.31.66:8000",
+        "https://dgd22g40-8000.euw.devtunnels.ms"]
         ,  # Укажите адрес основного приложения
     allow_credentials=True,
     allow_methods=["*"],  # Разрешить все HTTP-методы (GET, POST, DELETE и т.д.)
     allow_headers=["*"],  # Разрешить все заголовки
+    expose_headers=["*"]  # Важно для доступа к кастомным заголовкам
 )
 
 app.include_router(main_router)

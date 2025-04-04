@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const printerGallery = document.getElementById('printer-gallery');
-  const apiUrl = 'http://192.168.31.66:8001/api/printers/';
-
+  const apiUrl = 'https://dgd22g40-8001.euw.devtunnels.ms/api/printers/';
+  
   const openFormBtn = document.getElementById('open-form-btn');
   const closeFormBtn = document.getElementById('close-form-btn');
   const formContainer = document.getElementById('printer-form-container');
